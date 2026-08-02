@@ -29,7 +29,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     subscribed = await is_user_subscribed(user_id, context)
     if not subscribed:
-        # நேரடிச் சரியான லிங்க் இங்கே இணைக்கப்பட்டுள்ளது
         keyboard = [[InlineKeyboardButton("📢 Join Channel Here", url="https://t.me")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
