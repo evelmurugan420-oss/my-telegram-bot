@@ -3,19 +3,45 @@ import os
 import asyncio
 from threading import Thread
 from http.server import SimpleHTTPRequestHandler, HTTPServer
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.error import TelegramError
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# ⚠️ உங்களது Bot Token
 BOT_TOKEN = "8905299984:AAE6dC5_caVZkXVMfJBjvUctNp8CO1nGvDg"
+
+# ⚠️ உங்களது டெலிகிராம் சேனல் யூசர்நேமை இங்கே உள்ளிடவும் (உதாரணம்: "@my_channel")
+CHANNEL_USERNAME = "@Dating2001bot"
 
 waiting_users = []
 active_chats = {}
 
+# பயனர் சேனலில் இணைந்துள்ளாரா என்று சரிபார்க்கும் ஃபங்க்ஷன்
+async def is_user_subscribed(user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    try:
+        member = await context.bot.get_chat_member(chat_id=CHANNEL_USERNAME, user_id=user_id)
+        if member.status in ['member', 'creator', 'administrator']:
+            return True
+        return False
+    except TelegramError:
+        # பாட் சேனலில் அட்மினாக இல்லை என்றாலோ அல்லது சேனல் பெயர் தவறாக இருந்தாலோ இது நிகழும்
+        return False
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
+    
+    # சேனல் செக்
+    subscribed = await is_user_subscribed(user_id, context)
+    if not subscribed:
+        keyboard = [[InlineKeyboardButton("📢 Join Channel Here", url=f"https://t.me{CHANNEL_USERNAME.replace('@','')}")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text(
+            f"❌ நீங்க இன்னும் நம்ம சேனல்ல ஜாயின் பண்ணல!\n\nபாட்டைப் பயன்படுத்த முதலில் கீழே உள்ள பொத்தானை அழுத்தி நம்ம சேனல்ல ஜாயின் பண்ணிட்டு, அப்புறம் மறுபடி /start குடுங்க. 👍",
+            reply_markup=reply_markup
+        )
+        return
+
     reply_keyboard = [['/find - Find Partner', '/exit - Exit Chat']]
     await update.message.reply_text(
         "👋 Welcome! Stranger கூட பேசத் தொடங்க கீழே உள்ள '/find' பொத்தானை அழுத்துங்க.",
@@ -24,6 +50,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def find_partner(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
+    
+    # தேடும்போதும் சேனல் செக்
+    subscribed = await is_user_subscribed(user_id, context)
+    if not subscribed:
+        await update.message.reply_text("⚠️ சாட் செய்ய முதலில் நம்ம சேனல்ல இணைந்து இருக்க வேண்டும்! /start கொடுத்துச் சரிபார்க்கவும்.")
+        return
+
     if user_id in active_chats:
         await update.message.reply_text("நீங்க ஏற்கனவே ஒரு சாட்டில் தான் இருக்கீங்க! 😅")
         return
@@ -69,10 +102,8 @@ def run_dummy_server():
     server.serve_forever()
 
 def main():
-    # Render போர்ட் பிக்ஸ்
     Thread(target=run_dummy_server, daemon=True).start()
 
-    # புதிய அசிங்க் லூப் பிக்ஸ் (Asyncio Loop Fix)
     try:
         loop = asyncio.get_event_loop()
     except RuntimeError:
