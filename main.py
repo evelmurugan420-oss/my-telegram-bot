@@ -12,7 +12,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 BOT_TOKEN = "8905299984:AAE6dC5_caVZkXVMfJBjvUctNp8CO1nGvDg"
 
 # ⚠️ உங்களது டெலிகிராம் சேனல் யூசர்நேமை இங்கே உள்ளிடவும் (உதாரணம்: "@my_channel")
-CHANNEL_USERNAME = "@Dating2001bot"
+CHANNEL_USERNAME = "@detingchannel"
 
 waiting_users = []
 active_chats = {}
