@@ -34,7 +34,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # சேனல் செக்
     subscribed = await is_user_subscribed(user_id, context)
     if not subscribed:
-                keyboard = [[InlineKeyboardButton("📢 Join Channel Here", url="https://t.me")]]
+     keyboard = [[InlineKeyboardButton("📢 Join Channel Here", url="https://t.me")]]
+ Join Channel Here", url="https://t.me")]]
 Join Channel Here", url=f"https://t.me{CHANNEL_USERNAME.replace('@','')}")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
