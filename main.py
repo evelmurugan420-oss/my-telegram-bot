@@ -34,7 +34,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # சேனல் செக்
     subscribed = await is_user_subscribed(user_id, context)
     if not subscribed:
-        keyboard = [[InlineKeyboardButton("📢 Join Channel Here", url=f"https://t.me{CHANNEL_USERNAME.replace('@','')}")]]
+                keyboard = [[InlineKeyboardButton("📢 Join Channel Here", url="https://t.me")]]
+Join Channel Here", url=f"https://t.me{CHANNEL_USERNAME.replace('@','')}")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
             f"❌ நீங்க இன்னும் நம்ம சேனல்ல ஜாயின் பண்ணல!\n\nபாட்டைப் பயன்படுத்த முதலில் கீழே உள்ள பொத்தானை அழுத்தி நம்ம சேனல்ல ஜாயின் பண்ணிட்டு, அப்புறம் மறுபடி /start குடுங்க. 👍",
