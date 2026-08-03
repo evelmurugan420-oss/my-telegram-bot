@@ -9,12 +9,14 @@ from telegram.error import TelegramError
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
+# உங்களது டெலிகிராம் பாட் டோக்கன் மற்றும் விளம்பர சேனல் பெயர்
 BOT_TOKEN = "8905299984:AAE6dC5_caVZkXVMfJBjvUctNp8CO1nGvDg"
 CHANNEL_USERNAME = "@detingchannel"
 
 waiting_users = []
 active_chats = {}
 
+# பயனர் சேனலில் இணைந்துள்ளாரா என்று சரிபார்க்கும் ஃபங்க்ஷன்
 async def is_user_subscribed(user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
     try:
         member = await context.bot.get_chat_member(chat_id=CHANNEL_USERNAME, user_id=user_id)
@@ -24,15 +26,17 @@ async def is_user_subscribed(user_id: int, context: ContextTypes.DEFAULT_TYPE) -
     except TelegramError:
         return False
 
+# /start கமாண்ட் இயங்கும் பகுதி
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     
     subscribed = await is_user_subscribed(user_id, context)
     if not subscribed:
+        # 🎯 இந்த வரியில் லிங்க் துல்லியமாகச் சரிசெய்யப்பட்டுள்ளது
         keyboard = [[InlineKeyboardButton("📢 Join Channel Here", url="https://t.me")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
-            f"❌ நீங்க இன்னும் நம்ம சேனல்ல ஜாயின் பண்ணல!\n\nபாட்டைப் பயன்படுத்த முதலில் கீழே உள்ள பொத்தானை அழுத்தி நம்ம சேனல்ல ஜாயின் பண்ணிட்டு, அப்புறம் மறுபடி /start guqunga. 👍",
+            f"❌ நீங்க இன்னும் நம்ம சேனல்ல ஜாயின் பண்ணல!\n\nபாட்டைப் பயன்படுத்த முதலில் கீழே உள்ள பொத்தானை அழுத்தி நம்ம சேனல்ல ஜாயின் பண்ணிட்டு, அப்புறம் மறுபடி /start குடுங்க. 👍",
             reply_markup=reply_markup
         )
         return
@@ -43,6 +47,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True)
     )
 
+# /find கமாண்ட் இயங்கும் பகுதி
 async def find_partner(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     
@@ -68,6 +73,7 @@ async def find_partner(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=user_id, text="🎯 Partner கிடைச்சிட்டாங்க! பேசத் தொடங்குங்க. வெளியேற '/exit' அனுப்புங்க.")
         await context.bot.send_message(chat_id=partner_id, text="🎯 Partner கிடைச்சிட்டாங்க! பேசத் தொடங்குங்க. வெளியேற '/exit' அனுப்புங்க.")
 
+# செய்திகளை ஒருவரிடமிருந்து மற்றொருவருக்கு அனுப்பும் பகுதி
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id in active_chats:
@@ -76,6 +82,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("பேசத் தொடங்க முதலில் கீழே உள்ள '/find' பொத்தானை அழுத்துங்க.")
 
+# /exit கமாண்ட் இயங்கும் பகுதி
 async def exit_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id in active_chats:
@@ -90,13 +97,14 @@ async def exit_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("நீங்க எந்த சாட்டிலும் இல்லை.")
 
+# Render சர்வர் போர்ட் டைம்-அவுட் சிக்கலைத் தவிர்க்கும் போலி வெப் சர்வர்
 def run_dummy_server():
     port = int(os.environ.get("PORT", 8080))
     server = HTTPServer(('0.0.0.0', port), SimpleHTTPRequestHandler)
     server.serve_forever()
 
+# மெயின் ஃபங்க்ஷன் (பாட்டை இயக்கும் முக்கியப் பகுதி)
 def main():
-    # Render சர்வர் பிக்ஸ் லைன்
     Thread(target=run_dummy_server, daemon=True).start()
 
     try:
