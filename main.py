@@ -32,7 +32,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = [[InlineKeyboardButton("📢 Join Channel Here", url="https://t.me")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
-            f"❌ நீங்க இன்னும் நம்ம சேனல்ல ஜாயின் பண்ணல!\n\nபாட்டைப் பயன்படுத்த முதலில் கீழே உள்ள பொத்தானை அழுத்தி நம்ம சேனல்ல ஜாயின் பண்ணிட்டு, அப்புறம் மறுபடி /start குடுங்க. 👍",
+            f"❌ நீங்க இன்னும் நம்ம சேனல்ல ஜாயின் பண்ணல!\n\nபாட்டைப் பயன்படுத்த முதலில் கீழே உள்ள பொத்தானை அழுத்தி நம்ம சேனல்ல ஜாயின் பண்ணிட்டு, அப்புறம் மறுபடி /start guqunga. 👍",
             reply_markup=reply_markup
         )
         return
@@ -96,6 +96,7 @@ def run_dummy_server():
     server.serve_forever()
 
 def main():
+    # Render சர்வர் பிக்ஸ் லைன்
     Thread(target=run_dummy_server, daemon=True).start()
 
     try:
